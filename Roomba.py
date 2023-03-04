@@ -10,19 +10,17 @@ K=ctypes.CDLL("/usr/lib/libkipr.so")
 BLACK = 1500
 BACK_BLACK = 3700  
     
-TOPH_RIGHT = 2
-TOPH_LEFT = 1
-TOPH_BRIGHT = 4
-TOPH_BLEFT = 3
-    
 SLOW = 125
-FAST = 500
+FAST = 400
 
 CLAW = 1
 ARM = 0
 
-CLAW_HOME = 0
-ARM_HOME = 2047
+CLAW_HOME = 1000
+ARM_HOME = 2000
+
+CLAW_CLOSE = 2024    
+ARM_UP = 0    
 
 LS = 1
 
@@ -63,21 +61,7 @@ def servo_control(servo, end_pos, tick_delay=1):
 def drive(left_power, right_power, duration):
     K.create_drive_direct(int(left_power), int(right_power))
     K.msleep(duration)
-    stop()  
-
-def line_follow(time, sensor=TOPH_LEFT):
-    end_time = K.seconds() + time
-    while K.seconds() < end_time:
-        if K.analog(sensor) > BLACK:
-            if sensor == TOPH_LEFT:
-                drive(-39, -52,1000)
-            else:
-                drive(-52, -39,1000)
-        else:
-            if sensor == TOPH_LEFT:
-                drive(-52, -39,1000)
-            else:
-                drive(-39, -52,1000)                
+    stop()                 
 
 
 # wait for start light
@@ -121,6 +105,10 @@ def main():
 
 # Do stuff ===============================================
 
+    #turn 
+    drive(-SLOW, SLOW, 1500)
+    pause()
+                
     # Back align with wall in start box
     drive(-FAST,-FAST,500)
     pause()
@@ -129,23 +117,50 @@ def main():
     lw = FAST
     rw = FAST
     K.create_drive_direct(lw,rw)
-    K.msleep(1000) #skip over first black line and knock over ring toy
-    K.set_servo_position(ARM, 800)
+    K.msleep(1200) #skip over first black line and knock over ring toy
+    K.set_servo_position(ARM, 1000)
 
     while ((lw > 0) & (rw > 0)):
-        if K.get_create_lcliff_amt() < 2000:
+        if ((K.get_create_lcliff_amt() < 2000) and (K.get_create_rcliff_amt() < 2000)):
             lw = 0
-        if K.get_create_rcliff_amt() < 2000:
             rw = 0
-        K.create_drive_direct(lw,rw)
-    pause(300)
+    pause(1000)               
     
     # Rotate 90d to right (counterclockwise)
-    drive(SLOW,-SLOW,1180)
-    pause(300)
+    #drive(SLOW,-SLOW,1230)
+    #pause(3000)
+    while (K.get_create_lfcliff_amt() > 2000):
+        K.create_drive_direct(SLOW, -SLOW)
+    drive(-SLOW, SLOW, 100)
+    pause(300)             
+    
+    # Go back to botgal            
+    drive(-FAST, -FAST, 3000)
+            
+    # turn slightly
+    drive(SLOW, SLOW, 300)
+    while (K.get_create_rfcliff_amt() < 2000):
+        K.create_drive_direct(-SLOW, SLOW)        
                 
-    line_follow(2000)
-    pause()
+    # Raise arm
+    K.set_servo_position(ARM, ARM_UP)
+    pause(500)        
+                
+    # Close claw            
+    K.set_servo_position(CLAW, CLAW_CLOSE)
+    pause(500)        
+                
+    # Lower arm
+    K.set_servo_position(ARM, ARM_HOME) 
+    pause(300)        
+                
+    # Turn and move to analysis lab
+    drive(SLOW, -SLOW, 500)
+    drive(FAST, FAST, 1500)
+    pause(300)
+    
+    # Release Botgal
+    K.set_servo_position(CLAW, CLAW_HOME)            
                 
     # Clean up
     K.ao()
