@@ -150,7 +150,9 @@ def main():
     	move(0, -100)
     while KIPR.analog(LS_R) > BLACK:
     	move(0, -100)
-    move(50, 50, 2700)
+    while not switch(TOP_SWITCH):
+		move(50, 50)
+    stop()
     print("Time at ball thingy:", (KIPR.seconds() - start_time) / 1000, "seconds")
     KIPR.msleep(3000)
     
@@ -163,10 +165,11 @@ def main():
         ball_pusher(2047)
         ball_pusher(0)
     print("Turning to drop pink one in the wireshark.")
-    switcher_finger(512)
+    move(-100, -100, 300)
     long_arm(0)
-    move(-100, 0, 1000)
     ball_collector_arm(1800)
+    move(-100, 100, 700)
+    move(100, -100, 200)
     ball_pusher(2047)
     ball_pusher(0)
     print("Pushing wireshark into analysis lab")
