@@ -106,61 +106,87 @@ def main():
 # Do stuff ===============================================
 
     #turn 
-    drive(-SLOW, SLOW, 1500)
+    drive(SLOW, -SLOW, 615)
     pause()
                 
     # Back align with wall in start box
-    drive(-FAST,-FAST,500)
-    pause()
+    #drive(-FAST,-FAST,500)
+    #pause()
 
     # Drive to middle line
-    lw = FAST
-    rw = FAST
+    lw = -FAST
+    rw = -FAST
     K.create_drive_direct(lw,rw)
     K.msleep(1200) #skip over first black line and knock over ring toy
     K.set_servo_position(ARM, 1000)
 
+                
     while ((lw > 0) & (rw > 0)):
         if ((K.get_create_lcliff_amt() < 2000) and (K.get_create_rcliff_amt() < 2000)):
             lw = 0
             rw = 0
-    pause(1000)               
+    pause(100)         
+                
+    drive(-FAST, -FAST, 900)
+    #drive(SLOW, -SLOW, 3150)
+    drive(FAST, -FAST, 1305)
+                
+    K.create_drive_direct(-lw,-rw)
+    K.msleep(1000) 
+
+                
+    while ((lw > 0) & (rw > 0)):
+        if ((K.get_create_lcliff_amt() < 2000) and (K.get_create_rcliff_amt() < 2000)):
+            lw = 0
+            rw = 0
+    pause(1000)  
+    drive(-SLOW, -SLOW, 200)
+                
+    drive(FAST, -FAST, 500)
+    while (K.get_create_lfcliff_amt() < 2000):
+	    K.create_drive_direct(FAST, -FAST)
+            
+    drive(-FAST, -FAST, 1000)
+    pause(1000)
+            
+    #get botgal
+    K.set_servo_position(ARM, ARM_UP)
+    pause(400)
+    K.set_servo_position(CLAW, CLAW_CLOSE)
+               
     
+
+                
+
     # Rotate 90d to right (counterclockwise)
     #drive(SLOW,-SLOW,1230)
     #pause(3000)
-    while (K.get_create_lfcliff_amt() > 2000):
-        K.create_drive_direct(SLOW, -SLOW)
-    drive(-SLOW, SLOW, 100)
-    pause(300)             
+    #while (K.get_create_lfcliff_amt() > 2000):
+        #K.create_drive_direct(SLOW, -SLOW)
+    #drive(-SLOW, SLOW, 100)
+    #pause(300)             
     
     # Go back to botgal            
-    drive(-FAST, -FAST, 3000)
+    #drive(-FAST, -FAST, 3000)
             
-    # turn slightly
-    drive(SLOW, SLOW, 300)
-    while (K.get_create_rfcliff_amt() < 2000):
-        K.create_drive_direct(-SLOW, SLOW)        
-                
-    # Raise arm
-    K.set_servo_position(ARM, ARM_UP)
-    pause(500)        
-                
-    # Close claw            
-    K.set_servo_position(CLAW, CLAW_CLOSE)
-    pause(500)        
-                
-    # Lower arm
-    K.set_servo_position(ARM, ARM_HOME) 
-    pause(300)        
+    # Get Botgal
+    #drive(SLOW, SLOW, 300)
+    #while (K.get_create_rfcliff_amt() < 2000):
+        #K.create_drive_direct(-SLOW, SLOW)        
+    #K.set_servo_position(ARM, ARM_UP)
+    #pause(500)                   
+    #K.set_servo_position(CLAW, CLAW_CLOSE)
+    #pause(500)        
+    #K.set_servo_position(ARM, ARM_HOME) 
+    #pause(300)        
                 
     # Turn and move to analysis lab
-    drive(SLOW, -SLOW, 500)
-    drive(FAST, FAST, 1500)
-    pause(300)
+    #drive(SLOW, -SLOW, 500)
+    #drive(FAST, FAST, 1500)
+    #pause(300)
     
     # Release Botgal
-    K.set_servo_position(CLAW, CLAW_HOME)            
+    #K.set_servo_position(CLAW, CLAW_HOME)            
                 
     # Clean up
     K.ao()
