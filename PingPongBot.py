@@ -32,9 +32,11 @@ def ball_collector_arm(pos, wait=True):
     KIPR.set_servo_position(0, pos)
     if wait: KIPR.msleep(400)
 
-def ball_pusher(pos, wait=True):
-    KIPR.set_servo_position(1, 2047 * pos)
-    if wait: KIPR.msleep(500)
+def ball_pusher(pos, _=1):
+    start = KIPR.get_servo_position(1)
+    for i in range(start, pos, (-1 if start > pos else 1)):
+        KIPR.set_servo_position(1, i)
+        KIPR.msleep(1)
 
 def long_arm(pos, wait=True):
     KIPR.set_servo_position(2, pos)
@@ -102,7 +104,8 @@ def main():
         move(50, -50)
     while KIPR.analog(LS_R) > BLACK:
         move(35, -35)
-    stop(400)
+    #move(25, -25, 100)
+    stop()
     long_arm(1500)
     while KIPR.analog(LS_L) > BLACK:
         move(-100, 100)
@@ -134,46 +137,53 @@ def main():
     print("Back up...")
     move(-60, -100, 1000)
     print("Pulling out wireshark.")
+    switcher_finger(0)
     long_arm(0)
     KIPR.msleep(200)
     switcher_finger(1400)
     while KIPR.analog(LS_L) > BLACK:
-    	move(-100, -10)
+        move(-100, 10)
     while KIPR.analog(LS_L) < BLACK:
-    	move(-100, -10)
+        move(-100, 10)
     stop()
     long_arm(1600)
     print("Lining up under thingy pipe")
     move(-100, -100, 100)
     ball_collector_arm(2047)
-    while KIPR.analog(LS_R) < BLACK:
-    	move(0, -100)
-    while KIPR.analog(LS_R) > BLACK:
-    	move(0, -100)
+    while KIPR.analog(LS_L) < BLACK:
+    	move(0, -50)
+    while KIPR.analog(LS_L) > BLACK:
+        move(0, -50)
+    move(0, -50, 400)
     while not switch(TOP_SWITCH):
-		move(50, 50)
-    stop()
+        if KIPR.analog(LS_L) < BLACK:
+            move(40, 20)
+        else:
+            move(20, 40)
+    move(20, -20, 250)
+    move(-20, -20, 150)
     print("Time at ball thingy:", (KIPR.seconds() - start_time) / 1000, "seconds")
     KIPR.msleep(3000)
     
-    #while (KIPR.seconds() - start_time) < 65000:
-    #    print("Waiting for 65 seconds...", (KIPR.seconds() - start_time))
-    #    KIPR.msleep(100)
+    while (KIPR.seconds() - start_time) < 65000:
+        print("Waiting for 65 seconds...", (KIPR.seconds() - start_time) / 1000)
+        KIPR.msleep(100)
     
     for i in range(3):
         print("Drop %ith ball!" % (i + 1))
-        ball_pusher(2047)
+        ball_pusher(1880)
         ball_pusher(0)
     print("Turning to drop pink one in the wireshark.")
-    move(-100, -100, 300)
+    move(-100, -100, 500)
+    move(-100, 100, 500)
     long_arm(0)
     ball_collector_arm(1800)
     move(-100, 100, 700)
     move(100, -100, 200)
-    ball_pusher(2047)
+    ball_pusher(1880)
     ball_pusher(0)
     print("Pushing wireshark into analysis lab")
-    move(-100, 100, 800)
+    move(-100, 100, 700)
     long_arm(1500)
     print("Time at end", (KIPR.seconds() - start_time) / 1000, "seconds")
     print("oogityboogityboo")
