@@ -160,8 +160,10 @@ def main():
             move(40, 20)
         else:
             move(20, 40)
-    move(20, -20, 250)
-    move(-20, -20, 150)
+    #move(20, -20, 250)
+    #move(-20, -20, 150)
+    move(20, -20, 300)
+    move(-20, -20, 600)
     print("Time at ball thingy:", (KIPR.seconds() - start_time) / 1000, "seconds")
     KIPR.msleep(3000)
     
