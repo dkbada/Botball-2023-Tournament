@@ -16,10 +16,10 @@ FAST = 600
 CLAW = 1
 ARM = 0
 
-CLAW_HOME = 850
+CLAW_HOME = 950
 ARM_HOME = 2000
 
-CLAW_CLOSE = 2044    
+CLAW_CLOSE = 2080    
 ARM_UP = 0    
 
 LS = 1
@@ -54,10 +54,23 @@ def wfl():
     START = K.analog(LS)
     while(K.analog(LS) > START/2):
         K.msleep(50)
-
-def grabby(st=None):
+            
+# function for using servo
+def servo_control(servo_name, end_pos, rate=1):
+    pos = K.get_servo_position(servo_name)
+    print(servo_name, pos, end_pos)
+    if pos > end_pos:
+        for i in range(pos, end_pos, -rate):
+            K.set_servo_position(servo_name, i)
+            K.msleep(rate)
+    else:
+        for i in range(pos, end_pos, rate):
+            K.set_servo_position(servo_name, i)
+            K.msleep(rate)
+                
+def grabby(st=None, claw_pos = 900):
     # Get Botgal
-    K.set_servo_position(CLAW, CLAW_HOME)
+    K.set_servo_position(CLAW, claw_pos)
     K.set_servo_position(ARM, ARM_UP)
     pause(900)
     K.set_servo_position(CLAW, CLAW_CLOSE)
@@ -66,8 +79,9 @@ def grabby(st=None):
     if st is not None:
         print("Got botgal at {} seconds".format((K.seconds() - st) / 1000.))
     K.msleep(400)
-    K.set_servo_position(ARM, ARM_HOME)
-    pause(1000)
+    #K.set_servo_position(ARM, ARM_HOME)
+    servo_control(ARM, ARM_HOME)
+    pause(300)
             
 
 def main():
@@ -126,7 +140,8 @@ def main():
     grabby(start_time)
 
     # Drive Straight to Drop Position
-    drive(FAST,FAST,1200)
+    #drive(FAST,FAST,1200)
+    drive(FAST, FAST, 900)
     pause(500)
     
     # Rotate 45d Clockwise
@@ -136,44 +151,38 @@ def main():
     # Drop Botgal
     K.set_servo_position(CLAW, CLAW_HOME)            
     pause(500)
-    
-    drive(-SLOW,SLOW,900)
+    #Un-rotate
+    drive(-SLOW,SLOW,950)
     pause(100)
+    #Come back
     drive(-FAST, -FAST, 2000)
     pause(100)
     drive(SLOW,SLOW,500)
-    #K.create_drive_direct(SLOW,-SLOW)
-    #while K.get_create_lcliff_amt() < 2000: pass
-    #while K.get_create_lcliff_amt() > 2000: pass
     drive(SLOW,-SLOW,1300)
     pause(100)
-    drive(-SLOW, -SLOW, 2500)
     # Turn to line up with cube tower
-    drive(-SLOW,SLOW,1300)
-    grabby()
-    
-    #come back
-    drive(SLOW, SLOW, 500)
-    drive(SLOW, -SLOW, 750)
-    drive(FAST, FAST, 1500)
+    drive(-SLOW, -SLOW, 2800)
+    drive(-SLOW,SLOW,1250)
+    grabby(start_time, 950)
+    #drop in data lab
+    K.msleep(500)
+    drive(SLOW, -SLOW, 600)
+    drive(FAST, FAST, 1800)
     K.set_servo_position(CLAW, CLAW_HOME)
-    pause(500)
+    K.msleep(500)
+    
+    drive(-FAST, FAST, 200)
+    drive(-FAST,-FAST, 1400)
+    grabby(start_time, 950)
+    K.msleep(500)
+    drive(FAST,FAST, 800)
+    K.set_servo_position(CLAW, CLAW_HOME)
+    K.msleep(500)
+    
+    #move out of the way
+    drive(-FAST, -FAST, 800)
         
-    #go for second cube
-    while K.get_create_lcliff_amt() > 2000:
-		K.create_drive_direct(-FAST,-FAST)
-    pause(300)
-    while K.get_create_rfcliff_amt() > 2000:
-		K.create_drive_direct(-FAST, FAST)
-    drive(-FAST, -FAST, 1000)
-    pause(100)
-    drive(SLOW,SLOW,500)
-    drive(SLOW,-SLOW,1300)
-    pause(100)
-    drive(SLOW, SLOW, 2500)
-    # Turn to line up with cube tower
-    drive(-SLOW,SLOW,1300)
-    grabby()
+    
     
 
     # Clean up
