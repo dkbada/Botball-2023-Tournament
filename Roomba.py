@@ -20,7 +20,7 @@ CLAW_HOME = 950
 ARM_HOME = 2000
 
 CLAW_CLOSE = 2080    
-ARM_UP = 0    
+ARM_UP = 120    
 
 LS = 1
 
@@ -138,6 +138,7 @@ def main():
     pause(100)  
                 
     grabby(start_time)
+    pause(20000)
 
     # Drive Straight to Drop Position
     #drive(FAST,FAST,1200)
@@ -145,14 +146,14 @@ def main():
     pause(500)
     
     # Rotate 45d Clockwise
-    drive(SLOW,-SLOW,900)
+    drive(SLOW,-SLOW,700)
     pause(500)
     
     # Drop Botgal
     K.set_servo_position(CLAW, CLAW_HOME)            
     pause(500)
     #Un-rotate
-    drive(-SLOW,SLOW,950)
+    drive(-SLOW,SLOW,750)
     pause(100)
     #Come back
     drive(-FAST, -FAST, 2000)
@@ -161,21 +162,25 @@ def main():
     drive(SLOW,-SLOW,1300)
     pause(100)
     # Turn to line up with cube tower
-    drive(-SLOW, -SLOW, 2800)
+    #drive(-SLOW, -SLOW, 2800)
+    drive(-SLOW, -SLOW, 2885)
     drive(-SLOW,SLOW,1250)
-    grabby(start_time, 950)
-    #drop in data lab
+    drive(-SLOW, -SLOW, 800)
+    grabby(None, 950)
+    #drive and drop in data lab
     K.msleep(500)
     drive(SLOW, -SLOW, 600)
-    drive(FAST, FAST, 1800)
+    #drive(FAST, FAST, 1650)
+    drive(FAST, FAST, 1750)
     K.set_servo_position(CLAW, CLAW_HOME)
     K.msleep(500)
     
+    #get second cube
     drive(-FAST, FAST, 200)
     drive(-FAST,-FAST, 1400)
-    grabby(start_time, 950)
+    grabby(None, 950)
     K.msleep(500)
-    drive(FAST,FAST, 800)
+    drive(int(FAST*0.6),FAST, 800)
     K.set_servo_position(CLAW, CLAW_HOME)
     K.msleep(500)
     
