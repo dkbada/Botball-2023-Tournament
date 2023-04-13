@@ -66,7 +66,7 @@ def setup_servos():
 def wait_for_light():
     start_light = KIPR.analog(0) # Get ambient light
     while KIPR.analog(0) > start_light/2:
-       stop(200)
+       pass
 
 def main():
     print("Setting up...")
@@ -101,9 +101,9 @@ def main():
     while KIPR.analog(LS_R) > BLACK:
         move(100, -100)
     while KIPR.analog(LS_R) < BLACK:
-        move(50, -50)
+        move(75, -75)
     while KIPR.analog(LS_R) > BLACK:
-        move(35, -35)
+        move(100, -100)
     #move(25, -25, 100)
     stop()
     long_arm(1500)
@@ -160,19 +160,17 @@ def main():
             move(40, 20)
         else:
             move(20, 40)
-    #move(20, -20, 250)
-    #move(-20, -20, 150)
-    move(20, -20, 300)
-    move(-20, -20, 600)
+    move(20, -20, 430)
+    move(-20, -20, 400)
     print("Time at ball thingy:", (KIPR.seconds() - start_time) / 1000, "seconds")
     KIPR.msleep(3000)
     
-    while (KIPR.seconds() - start_time) < 65000:
-        print("Waiting for 65 seconds...", (KIPR.seconds() - start_time) / 1000)
-        KIPR.msleep(100)
+    while (KIPR.seconds() - start_time) < 61000:
+        print("Waiting for 61 seconds...", (KIPR.seconds() - start_time) / 1000)
+        KIPR.msleep(1000)
     
     for i in range(3):
-        print("Drop %ith ball!" % (i + 1))
+        print("Drop ball %d!" % i)
         ball_pusher(1880)
         ball_pusher(0)
     print("Turning to drop pink one in the wireshark.")
@@ -185,7 +183,11 @@ def main():
     ball_pusher(1880)
     ball_pusher(0)
     print("Pushing wireshark into analysis lab")
-    move(-100, 100, 700)
+    while KIPR.analog(LS_R) < BLACK:
+    	move(-100, 100)
+    while KIPR.analog(LS_R) > BLACK:
+        move(0, 100)
+    move(-100, 100, 200)
     long_arm(1500)
     print("Time at end", (KIPR.seconds() - start_time) / 1000, "seconds")
     print("oogityboogityboo")
