@@ -16,10 +16,10 @@ FAST = 600
 CLAW = 1
 ARM = 0
 
-CLAW_HOME = 950
-ARM_HOME = 2000
+CLAW_HOME = 900
+ARM_HOME = 2047
 
-CLAW_CLOSE = 2080    
+CLAW_CLOSE = 2000    
 ARM_UP = 120    
 
 LS = 1
@@ -142,45 +142,60 @@ def main():
 
     # Drive Straight to Drop Position
     #drive(FAST,FAST,1200)
-    drive(FAST, FAST, 900)
+    drive(FAST, FAST, 950)
     pause(500)
     
     # Rotate 45d Clockwise
-    drive(SLOW,-SLOW,700)
+    drive(SLOW,-SLOW,550)
     pause(500)
     
     # Drop Botgal
     K.set_servo_position(CLAW, CLAW_HOME)            
     pause(500)
     #Un-rotate
-    drive(-SLOW,SLOW,750)
+    drive(-SLOW,SLOW,600)
     pause(100)
     #Come back
-    drive(-FAST, -FAST, 2000)
+    drive(-FAST, -FAST, 1960)
     pause(100)
     drive(SLOW,SLOW,500)
     drive(SLOW,-SLOW,1300)
     pause(100)
+   
     # Turn to line up with cube tower
-    #drive(-SLOW, -SLOW, 2800)
-    drive(-SLOW, -SLOW, 2885)
+    #drive(-SLOW, -SLOW, 2885)
+    drive(-SLOW, -SLOW, 2800)
     drive(-SLOW,SLOW,1250)
-    drive(-SLOW, -SLOW, 800)
+    drive(-SLOW, -SLOW, 1000)
+    drive(SLOW, SLOW, 300)
     grabby(None, 950)
+        
     #drive and drop in data lab
     K.msleep(500)
     drive(SLOW, -SLOW, 600)
-    #drive(FAST, FAST, 1650)
-    drive(FAST, FAST, 1750)
+    drive(FAST, FAST, 1480)
+    #drive(SLOW, -SLOW, 150)
     K.set_servo_position(CLAW, CLAW_HOME)
     K.msleep(500)
     
-    #get second cube
-    drive(-FAST, FAST, 200)
-    drive(-FAST,-FAST, 1400)
+    #align to pipe
+    drive(-FAST, FAST, 305)
+    drive(-FAST,-FAST, 1800)
+    drive(-SLOW, -SLOW, 1300)
+    drive(SLOW, SLOW, 1300)
+    K.msleep(500)
+        
+    #rotate 90 deg and advance to middle black line
+    drive(-SLOW, SLOW, 1250)
+    while (K.get_create_lfcliff_amt() and K.get_create_rfcliff_amt() > 2000):
+		K.create_drive_direct(SLOW, SLOW)
+    K.msleep(500)
+    drive(-SLOW, -SLOW, 2420)
+    drive(SLOW,-SLOW,1250)
+    drive(-SLOW, -SLOW, 1530)
     grabby(None, 950)
     K.msleep(500)
-    drive(int(FAST*0.6),FAST, 800)
+    drive(FAST,FAST, 950)
     K.set_servo_position(CLAW, CLAW_HOME)
     K.msleep(500)
     
