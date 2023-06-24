@@ -20,17 +20,17 @@ void drive_for(int l_power, int r_power, int sleep_time) {
     move(0, 0);
 }
 
-void slow_servo(int which, int to) {
+void slow_servo(int which, int to, int delay) {
     int from = get_servo_position(which), i;
     if (from < to) {
         for (i = from; i < to; i++) {
             set_servo_position(which, i);
-            msleep(1);
+            msleep(delay);
         }
     } else {
         for (i = from; i > to; i--) {
             set_servo_position(which, i);
-            msleep(1);
+            msleep(delay);
         }
     }
 }
@@ -43,7 +43,7 @@ void slow_servo(int which, int to) {
 void line_follow(int aggression) {
     if (on_black(LS_L)) move(aggression, 100);
     else if (on_black(LS_R)) move(100, aggression);
-    else move(90, 100);
+    else move(70, 100);
 }
 #define line_follow_until(cond, aggression) do { \
     line_follow(aggression); \
@@ -69,22 +69,19 @@ bool lc_on_black(int threshold) {
 }
 
 // Servos
-#define DOOR_SERVO 1
-typedef enum { D_CLOSED = 600, D_OPEN = 0 } door_pos_t;
-void ball_door(door_pos_t pos) { set_servo_position(DOOR_SERVO, pos); msleep(400); }
 
 #define ARM_SERVO 0
-typedef enum { FLOOR = 2047, DOWN = 1970, WIRESHARK = 1860, UP = 1300, OUT_OF_WAY = 1500 } tube_arm_pos_t;
-void tube_arm(tube_arm_pos_t pos) { slow_servo(ARM_SERVO, pos); }
+typedef enum { DOWN = 2047, WIRESHARK = 1860, UP = 1300 } tube_arm_pos_t;
+void tube_arm(tube_arm_pos_t pos) { slow_servo(ARM_SERVO, pos, 3); }
 
 #define GRABBER_SERVO 2
 typedef enum { G_OPEN = 0, G_CLOSED = 1160 } grabber_pos_t;
-void grabber(grabber_pos_t pos) { slow_servo(GRABBER_SERVO, pos); }
+void grabber(grabber_pos_t pos) { slow_servo(GRABBER_SERVO, pos, 1); }
 
 void jiggle() {
     int i;
+    puts("jiggle jiggle jiggle");
     for (i = 0; i < 20; i++) {
-        puts("jiggle jiggle jiggle");
         move(100, -100);
         msleep(25);
         move(-100, -100);
@@ -103,17 +100,16 @@ bool tube_switch() { return digital(8); }
 
 void sleep_until_balls_drop(double start) {
     puts("sleeping until balls");
-    while (seconds() - start < 45) { ////////////////////////////////////////////////////////FIXME//////////
-        printf("time: %lg seconds\n", seconds() - start);
+    while (seconds() - start < 60 && !a_button()) {
+        printf("%lg secs - hit A to skip wait\n", seconds() - start);
         msleep(100);
     }
-    puts("at 61 seconds");
+    puts("at 60 seconds");
 }
 
 void setup() {
     enable_servos();
-    ball_door(D_CLOSED);
-    tube_arm(UP);
+    tube_arm(1520);
     grabber(G_OPEN);
     drive_for(-100, -100, 300);
 }
@@ -131,6 +127,7 @@ int main() {
     double start = seconds();
     //    shut_down_in(118.);
     puts("Going to line");
+    tube_arm(UP);
     until (on_black(LS_L) && on_black(LS_R)) move(100, 100);
     drive_for(100, 100, 1000);
     puts("turning");
@@ -169,35 +166,25 @@ int main() {
     puts("linefollow one sided");
     line_follow_one_sided_until(tube_switch(), LS_L, RIGHT, 50);
     stop();
-    tube_arm(FLOOR);
     sleep_until_balls_drop(start);
     jiggle();
-    tube_arm(DOWN);
     puts("backing up");
-    until (lc_on_black(LC_BLACK)) move(-100, -100);
-    tube_arm(OUT_OF_WAY);
-    puts("turning out of way");
-    drive_for(0, 100, 1500);
+    until (lc_on_black(LC_BLACK) && !tube_switch()) move(-20, -20);
+    stop();
+    tube_arm(UP);
+    puts("turning into analysis lab");
+    drive_for(100, -100, 500);
+    move(20, -30);
+    until (on_black(LS_L)) msleep(100);
     stop();
     grabber(G_OPEN);
-    drive_for(-60, -100, 1500);
-    drive_for(100, 100, 300);
-    tube_arm(WIRESHARK);
-    ball_door(D_OPEN);
-    msleep(1000);
-    tube_arm(UP);
-    puts("grabbing wireshark again");
-    drive_for(70, 100, 1800);
-    grabber(G_CLOSED);
+    drive_for(-100, -100, 500);
     puts("done");
     puts("clean up");
-    //drive_for(-50, -100, 2000);
-    stop();
-    tube_arm(OUT_OF_WAY);
-    msleep(100);
-    set_servo_position(GRABBER_SERVO, G_CLOSED);
-    msleep(400);
-    set_servo_position(ARM_SERVO, FLOOR);
+    drive_for(30, -100, 1500);
+    drive_for(-100, -100, 2000);
+    grabber(G_CLOSED);
+    tube_arm(DOWN);
     msleep(100);
     return 0;
 }
