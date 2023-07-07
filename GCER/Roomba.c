@@ -49,7 +49,13 @@ void grabby () {
     arm(DROP);
     grabber_turn(G_TUBE);
     claw(OPEN);
-        
+}  
+
+#define TUBE_SENSOR 0
+typedef enum { IN = 1660, OUT = 0 } tube_pos; 
+void tube_push (tube_pos pos) { 
+    
+}
 
 void wfl() {
     puts("waiting for light");
@@ -152,7 +158,7 @@ int main() {
     
     
     //push out cubes
-        
-    }
+    
     return 0;
 }
+
