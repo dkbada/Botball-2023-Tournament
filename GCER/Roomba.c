@@ -31,12 +31,12 @@ void slow_servo(int which, int to, int delay) {
     }
 }
 
-#define GRABBER_TURN_SERVO 0
-typedef enum { G_TOWER = 0, G_TUBE = 2047, G_START = 1552} grabber_pos_t;
+#define GRABBER_TURN_SERVO 1
+typedef enum { G_TOWER = 61, G_TUBE = 1853, G_START = 1552} grabber_pos_t;
 void grabber_turn(grabber_pos_t pos) { set_servo_position(GRABBER_TURN_SERVO, pos); msleep(400); }
 
-#define ARM_SERVO 3
-typedef enum { DOWN = 652, UP = 1691, BOTGAL_LOW_CUBES = 2047, DROP = 746, STOW = 1320 } arm_pos_t;
+#define ARM_SERVO 0
+typedef enum { DOWN = 0, UP = 1150, BOTGAL_LOW_CUBES = 2047, DROP = 733, STOW = 490 } arm_pos_t;
 void arm(arm_pos_t pos) { slow_servo(ARM_SERVO, pos, 1); }
 
 #define CLAW_SERVO 2
@@ -49,13 +49,14 @@ void grabby () {
     claw(CLOSED);
     arm(DROP);
     grabber_turn(G_TUBE);
+    msleep(800);
     claw(OPEN);
 }  
 
-#define TUBE_SENSOR 0
-typedef enum { IN = 1600 } tube_pos; 
+
+typedef enum { IN = 1650 } tube_pos; 
 void tube_in () { 
-    while (analog(1) < IN) {
+    while (analog(0) < IN) {
         motor(0, 70);
         msleep(50);
     }
@@ -74,7 +75,7 @@ void tube_out () {
 void wfl() {
     puts("waiting for light");
     int initial = analog(0);
-    until (analog(0) < (initial >> 1)) msleep(100);
+    until (analog(1) < (initial >> 1)) msleep(100);
     puts("start!!");
 }
 
@@ -98,18 +99,17 @@ int main() {
     shut_down_in(118);
     
     //drive to center line
-    drive(SLOW, -SLOW, 280);
-    set_servo_position(3, 1691); msleep(300);
+    drive(SLOW, -SLOW, 295);
+    set_servo_position(0, 1150); msleep(200);
     move(-FAST, -FAST);
-    tube_in();
     grabber_turn(G_TOWER);
     claw(OPEN);
-    msleep(900);
+    msleep(1300);
     while (get_create_lcliff_amt() > 2000) {
         move(-FAST, -FAST);
     }
     move(0, 0);
-    msleep(100);
+    msleep(200);
     drive(SLOW, SLOW, 200);
     
     //rotate 45 deg
@@ -120,26 +120,26 @@ int main() {
     
     //grab botgal and go to drop
     claw(CLOSED);
-    msleep(200);
-    arm(DROP);
+    set_servo_position(0, 490); msleep(200);
     //might have to wait for other bot
     drive(FAST, FAST, 950);
     msleep(500);
-    drive(-SLOW, SLOW, 1800);
+    drive(-SLOW, SLOW, 2400);
     msleep(500);
     arm(UP);
     claw(OPEN);
     msleep(300);
     
     //come back and go to next tower
-    drive(SLOW, -SLOW, 1900);
+    drive(SLOW, -SLOW, 2500);
     msleep(100);
     arm(STOW);
     drive(-FAST, -FAST, 1960);
     msleep(100);
-    drive(SLOW, SLOW, 500);
+    drive(SLOW, SLOW, 900);
     drive(SLOW, -SLOW, 1250);
     msleep(100);
+    tube_in();
     
     //get cube 1
     while (get_create_lfcliff_amt() > 2000) {
@@ -150,7 +150,7 @@ int main() {
     msleep(300);
     drive(-SLOW, SLOW, 1250);
     drive(-SLOW, -SLOW, 1000);
-    msleep(1500);
+    msleep(500);
     drive(SLOW, SLOW, 300);
     grabby();
     
