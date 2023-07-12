@@ -36,7 +36,7 @@ typedef enum { G_TOWER = 61, G_TUBE = 1853, G_START = 1552} grabber_pos_t;
 void grabber_turn(grabber_pos_t pos) { set_servo_position(GRABBER_TURN_SERVO, pos); msleep(400); }
 
 #define ARM_SERVO 0
-typedef enum { DOWN = 0, UP = 1150, BOTGAL_LOW_CUBES = 2047, DROP = 733, STOW = 490 } arm_pos_t;
+typedef enum { DOWN = 0, UP = 1150, CUBE = 1240, BOTGAL_LOW_CUBES = 2047, DROP = 850, STOW = 490 } arm_pos_t;
 void arm(arm_pos_t pos) { slow_servo(ARM_SERVO, pos, 1); }
 
 #define CLAW_SERVO 2
@@ -45,11 +45,18 @@ void claw(claw_pos_t pos) { set_servo_position(CLAW_SERVO, pos); msleep(500); }
 
 //grab cube from towers
 void grabby () {
-    arm(UP);
+    arm(CUBE);
     claw(CLOSED);
-    arm(DROP);
+    msleep(200);
+    arm(STOW);
+    drive(600, 600, 700);
+    msleep(200);
+    arm(UP);
+    msleep(200);
     grabber_turn(G_TUBE);
-    msleep(800);
+    msleep(200);
+    arm(DROP);
+    msleep(1500);
     claw(OPEN);
 }  
 
@@ -99,39 +106,40 @@ int main() {
     shut_down_in(118);
     
     //drive to center line
-    drive(SLOW, -SLOW, 295);
-    set_servo_position(0, 1150); msleep(200);
-    move(-FAST, -FAST);
+    //drive(SLOW, -SLOW, 295);
+    move(-360, -FAST);
+    arm(UP);
     grabber_turn(G_TOWER);
-    claw(OPEN);
-    msleep(1300);
+    msleep(1400);
     while (get_create_lcliff_amt() > 2000) {
         move(-FAST, -FAST);
     }
     move(0, 0);
     msleep(200);
-    drive(SLOW, SLOW, 200);
+    drive(SLOW, SLOW, 940);
     
     //rotate 45 deg
-    drive(-SLOW, SLOW, 950);
+    claw(OPEN);
+    //drive(-SLOW, SLOW, 950);
+    drive(-SLOW, SLOW, 1290);
     msleep(100);
-    drive(-SLOW, -SLOW, 800);
-    msleep(100);
+    drive(-SLOW, -SLOW, 900);
+    claw(CLOSED);
     
     //grab botgal and go to drop
-    claw(CLOSED);
-    set_servo_position(0, 490); msleep(200);
+    //set_servo_position(0, 490);
+    arm(STOW);
     //might have to wait for other bot
     drive(FAST, FAST, 950);
     msleep(500);
-    drive(-SLOW, SLOW, 2400);
+    drive(-SLOW, SLOW, 2600);
     msleep(500);
     arm(UP);
     claw(OPEN);
     msleep(300);
     
     //come back and go to next tower
-    drive(SLOW, -SLOW, 2500);
+    drive(SLOW, -SLOW, 2700);
     msleep(100);
     arm(STOW);
     drive(-FAST, -FAST, 1960);
