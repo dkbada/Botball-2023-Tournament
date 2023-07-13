@@ -53,41 +53,35 @@ void grabby () {
     msleep(200);
     arm(UP);
     msleep(200);
-    grabber_turn(G_TUBE);
+    grabber_turn(G_TOWER);
     msleep(200);
     arm(DROP);
     msleep(1500);
     claw(OPEN);
 }  
 
-
-typedef enum { IN = 1650 } tube_pos; 
-void tube_in () { 
-    while (analog(0) < IN) {
-        motor(0, 70);
-        msleep(50);
-    }
-    ao();
+#define abs(x) ({int z___ = (x); z___ < 0 ? -z___ : z___; })
+typedef enum { IN = 4000, OUT = 50, START = 2000 } tube_pos; 
+void tube(tube_pos pos) { 
+    mav(0, analog(0) < pos ? 70 : -70);
+    int x;
+    do {
+        x = analog(0) - pos;
+        if (x < 0) x = -x;
+    } while (x > 5);
+    mav(0, 0);
 }
-
-void tube_out () {
-    clear_motor_position_counter(0);
-    while (get_motor_position_counter(0) > -500) {
-        motor(0, -50);
-        msleep(100);
-    }
-    ao();
-}    
 
 void wfl() {
     puts("waiting for light");
-    int initial = analog(0);
+    int initial = analog(1);
     until (analog(1) < (initial >> 1)) msleep(100);
     puts("start!!");
 }
 
 void setup() {
     enable_servos();
+    tube(OUT);
     puts("turn on Create");
     create_connect();
     arm(UP);
@@ -95,14 +89,15 @@ void setup() {
     claw(CLOSED);
     msleep(400);
     arm(DOWN);
+    tube(OUT);
 }
 
 #define FAST 600
 #define SLOW 125
 int main() {
     setup();
-    //wfl();
-    msleep(5000);
+    wfl();
+    //msleep(5000);
     shut_down_in(118);
     
     //drive to center line
@@ -110,10 +105,9 @@ int main() {
     move(-360, -FAST);
     arm(UP);
     grabber_turn(G_TOWER);
-    msleep(1400);
-    while (get_create_lcliff_amt() > 2000) {
-        move(-FAST, -FAST);
-    }
+    msleep(500);
+    move(-FAST, -FAST);
+    until (get_create_lcliff_amt() < 2000);
     move(0, 0);
     msleep(200);
     drive(SLOW, SLOW, 940);
@@ -147,12 +141,11 @@ int main() {
     drive(SLOW, SLOW, 900);
     drive(SLOW, -SLOW, 1250);
     msleep(100);
-    tube_in();
+    tube(IN);
     
     //get cube 1
-    while (get_create_lfcliff_amt() > 2000) {
-    	move(-SLOW, -SLOW);
-    }
+    move(-SLOW, -SLOW);
+    until (get_create_lfcliff_amt() < 2000);
     //drive(-SLOW, -SLOW, 2000);
     drive(-SLOW, -SLOW, 1500);
     msleep(300);
@@ -165,9 +158,8 @@ int main() {
     /*//go to center pipe
     drive(SLOW, SLOW, 500);
     drive(SLOW, -SLOW, 1250);
-    while (get_create_lfcliff_amt() > 2000) {
-        move(SLOW, SLOW);
-    }
+    move(SLOW, SLOW);
+    until (get_create_lfcliff_amt() < 2000);
     
     //grab cube 2
     drive(SLOW, SLOW, 2000);
