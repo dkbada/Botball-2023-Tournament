@@ -49,6 +49,7 @@ void grabby () {
     claw(CLOSED);
     msleep(200);
     arm(STOW);
+    msleep(500);
     drive(600, 600, 700);
     msleep(200);
     arm(UP);
@@ -61,7 +62,7 @@ void grabby () {
 }  
 
 #define abs(x) ({int z___ = (x); z___ < 0 ? -z___ : z___; })
-typedef enum { IN = 4000, OUT = 50, START = 2000 } tube_pos; 
+typedef enum { IN = 4000, OUT = 50, START = 1520 } tube_pos; 
 void tube(tube_pos pos) { 
     mav(0, analog(0) < pos ? 70 : -70);
     int x;
@@ -81,7 +82,7 @@ void wfl() {
 
 void setup() {
     enable_servos();
-    tube(OUT);
+    tube(START);
     puts("turn on Create");
     create_connect();
     arm(UP);
@@ -102,7 +103,7 @@ int main() {
     
     //drive to center line
     //drive(SLOW, -SLOW, 295);
-    move(-360, -FAST);
+    move(-410, -FAST);
     arm(UP);
     grabber_turn(G_TOWER);
     msleep(500);
@@ -117,23 +118,24 @@ int main() {
     //drive(-SLOW, SLOW, 950);
     drive(-SLOW, SLOW, 1290);
     msleep(100);
-    drive(-SLOW, -SLOW, 900);
+    drive(-SLOW, -SLOW, 1500);
     claw(CLOSED);
     
     //grab botgal and go to drop
     //set_servo_position(0, 490);
     arm(STOW);
     //might have to wait for other bot
+    msleep(500);
     drive(FAST, FAST, 950);
     msleep(500);
-    drive(-SLOW, SLOW, 2600);
+    drive(-SLOW, SLOW, 2400);
     msleep(500);
     arm(UP);
     claw(OPEN);
     msleep(300);
     
     //come back and go to next tower
-    drive(SLOW, -SLOW, 2700);
+    drive(SLOW, -SLOW, 2500);
     msleep(100);
     arm(STOW);
     drive(-FAST, -FAST, 1960);
