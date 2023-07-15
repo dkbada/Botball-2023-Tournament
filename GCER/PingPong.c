@@ -117,7 +117,7 @@ void setup() {
 void wfl() {
     int initial = analog(0);
     printf("waiting for light");
-    until (analog(0) < (initial)) msleep(100);
+    until (analog(0) < (initial/2)) msleep(100);
     printf("start!!");
 }
 
@@ -127,6 +127,8 @@ int main() {
     wfl();
     double start = seconds();
     shut_down_in(118);
+	puts("wait for 1 second");
+    msleep(1000);
     puts("Going to line");
     until (on_black(LS_L) && on_black(LS_R)) move(100, 100);
     drive_for(100, 100, 1000);
@@ -145,8 +147,8 @@ int main() {
     until (on_black(LS_R)) move(50, -50);
     until (on_black(LS_L)) move(50, -50);
     drive_for(0, 100, 500);
-    puts("wait for 7 seconds");
-    msleep(7000);
+    puts("wait for 27 seconds");
+    msleep(27000);
     // Linefollow down, counting the right side lines
     puts("linefollowing down");
     int lines = 0;
@@ -164,6 +166,8 @@ int main() {
     // Jump out
     drive_for(100, 0, 300);
     // Go to tube
+    puts("wait for 5 seconds");
+    msleep(5000); 
     tube_arm(DOWN);
     puts("linefollow one sided");
     line_follow_one_sided_until(tube_switch(), LS_L, RIGHT, 50);
