@@ -147,8 +147,8 @@ int main() {
     until (on_black(LS_R)) move(50, -50);
     until (on_black(LS_L)) move(50, -50);
     drive_for(0, 100, 500);
-    puts("wait for 27 seconds");
-    msleep(27000);
+    puts("wait for 23 seconds");
+    msleep(23000);
     // Linefollow down, counting the right side lines
     puts("linefollowing down");
     int lines = 0;
