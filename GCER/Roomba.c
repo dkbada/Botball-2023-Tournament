@@ -36,7 +36,7 @@ typedef enum { G_TOWER = 0, G_TUBE = 1900, G_START = 1540} grabber_pos_t;
 void grabber_turn(grabber_pos_t pos) { set_servo_position(GRABBER_TURN_SERVO, pos); msleep(400); }
 
 #define ARM_SERVO 0
-typedef enum { DOWN = 0, UP = 1070, CUBE = 1240, LOW_CUBES = 1814, DROP = 620, STOW = 450, NOODLE = 1400 } arm_pos_t;
+typedef enum { DOWN = 0, UP = 1000, CUBE = 1240, LOW_CUBES = 1814, DROP = 620, STOW = 390, NOODLE = 1400 } arm_pos_t;
 //drop = 910
 void arm(arm_pos_t pos) { slow_servo(ARM_SERVO, pos, 1); }
 
@@ -86,6 +86,8 @@ void grabby () {
     claw(OPEN);
     slow_servo(2, 2047, 1);
     jiggle();
+    move(-125, -125);
+    msleep(3000);
     tube(IN);
     msleep(500);
     arm(UP);
@@ -181,7 +183,7 @@ int main() {
     drive(SLOW, SLOW, 200);
     tube(IN);
     grabby();
-    drive(-SLOW, -SLOW, 3000);
+    msleep(7000);
     //drive(FAST, FAST, 200);
     //drive(-FAST, -FAST, 200);
     drive(SLOW, SLOW, 1400);
@@ -206,7 +208,6 @@ int main() {
     drive(SLOW, SLOW, 100);
     tube(IN);
     grabby();
-    drive(-SLOW, -SLOW, 2500);
     //drive(FAST, FAST, 200);
     //drive(-FAST, -FAST, 200);
     
@@ -233,6 +234,7 @@ int main() {
     tube(IN);
     arm(UP);
     msleep(300);
+    tube(IN);
     arm(DROP);
     msleep(500);
     claw(OPEN);
@@ -241,20 +243,20 @@ int main() {
     msleep(400);
     arm(UP);
     msleep(400);
-    arm(250);
-    msleep(400);
-    arm(UP);
+    tube(IN);
     drive(-SLOW, -SLOW, 300);
     
     
-    //noodles
-    drive(SLOW, -SLOW, 2560);
+    //go to analysis lab
+    /*drive(SLOW, -SLOW, 2560);
     msleep(1000);
     drive(-FAST, -FAST, 800);
     drive(-SLOW, -SLOW, 1000);
     drive(SLOW, SLOW, 1000);
     drive(-SLOW, SLOW, 1250);
-    drive(FAST, FAST, 1580);
+    drive(FAST, FAST, 1580);*/
+    drive(SLOW, -SLOW, 980);
+    drive(FAST, FAST, 2000);
     
     
     //push out cubes
@@ -264,4 +266,3 @@ int main() {
     
     return 0;
 }
-
