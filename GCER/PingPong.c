@@ -105,6 +105,7 @@ void sleep_until_balls_drop(double start) {
     puts("at 60 seconds");
 }
 
+
 void setup() {
     enable_servos();
     tube_arm(UP);
@@ -112,12 +113,14 @@ void setup() {
     drive_for(-100, -100, 300);
 }
 
+
 void wfl() {
-    puts("waiting for light");
     int initial = analog(0);
-    until (analog(0) < (initial >> 1)) msleep(100);
-    puts("start!!");
+    printf("waiting for light");
+    until (analog(0) < (initial)) msleep(100);
+    printf("start!!");
 }
+
 
 int main() {
     setup();
