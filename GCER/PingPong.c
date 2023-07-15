@@ -47,7 +47,6 @@ void line_follow(int aggression) {
 }
 #define line_follow_until(cond, aggression) do { \
     line_follow(aggression); \
-    printf("line follow until " #cond "\n"); \
     msleep(100); \
 } while (!(cond))
 
@@ -58,7 +57,6 @@ void line_follow_one_sided(int aggression, int sensor, edge_t edge) {
 }
 #define line_follow_one_sided_until(cond, side, edge, aggression) do { \
     line_follow_one_sided(aggression, side, edge); \
-    printf("line follow one sided until " #cond "\n"); \
     msleep(100); \
 } while (!(cond))
 
@@ -109,7 +107,7 @@ void sleep_until_balls_drop(double start) {
 
 void setup() {
     enable_servos();
-    tube_arm(1520);
+    tube_arm(UP);
     grabber(G_OPEN);
     drive_for(-100, -100, 300);
 }
@@ -125,9 +123,8 @@ int main() {
     setup();
     wfl();
     double start = seconds();
-    //    shut_down_in(118.);
+    shut_down_in(118);
     puts("Going to line");
-    tube_arm(UP);
     until (on_black(LS_L) && on_black(LS_R)) move(100, 100);
     drive_for(100, 100, 1000);
     puts("turning");
@@ -145,6 +142,8 @@ int main() {
     until (on_black(LS_R)) move(50, -50);
     until (on_black(LS_L)) move(50, -50);
     drive_for(0, 100, 500);
+    puts("wait for 7 seconds");
+    msleep(7000);
     // Linefollow down, counting the right side lines
     puts("linefollowing down");
     int lines = 0;
