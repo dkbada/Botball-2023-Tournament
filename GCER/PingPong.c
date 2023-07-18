@@ -61,7 +61,7 @@ void line_follow_one_sided(int aggression, int sensor, edge_t edge) {
 } while (!(cond))
 
 // Line Counter Sensor
-#define LC_BLACK 2700
+#define LC_BLACK 2300
 bool lc_on_black(int threshold) {
     return analog(3) > threshold;
 }
@@ -142,11 +142,12 @@ int main() {
     move(20, 0);
     grabber(G_CLOSED);
     // Turn around
-    drive_for(50, -50, 500);
+    drive_for(50, -50, 3300);
+    /*drive_for(50, -50, 400);
     puts("turning around with wireshark");
     until (on_black(LS_R)) move(50, -50);
     until (on_black(LS_L)) move(50, -50);
-    drive_for(0, 100, 500);
+    drive_for(0, 100, 500);*/
     puts("wait for 23 seconds");
     msleep(23000);
     // Linefollow down, counting the right side lines
